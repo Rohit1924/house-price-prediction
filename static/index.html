@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>India House Price Predictor</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 32px 20px;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #d1d5db;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            margin-bottom: 22px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+        }
+
+        select:disabled {
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            padding: 14px;
+            margin-top: 22px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #delhiFields {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .result {
+            display: none;
+            margin-top: 22px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            padding: 22px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .price {
+            color: #047857;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .error {
+            display: none;
+            margin-top: 18px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 14px;
+            border-radius: 8px;
+        }
+
+        .success {
+            display: none;
+            margin-top: 18px;
+            background: #ecfdf5;
+            color: #047857;
+            padding: 14px;
+            border-radius: 8px;
+        }
+
+        .info {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        footer {
+            text-align: center;
+            color: #6b7280;
+            padding: 25px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 650px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏠 India House Price Predictor</h1>
+    <p>Machine Learning Based Property Price Prediction</p>
+</header>
+
+
+<div class="container">
+
+    <!-- ================================================= -->
+    <!-- SINGLE HOUSE PREDICTION -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Predict House Price</h2>
+
+        <form id="predictionForm">
+
+            <div class="grid">
+
+                <!-- CITY -->
+
+                <div>
+                    <label for="city">City</label>
+
+                    <select id="city" required>
+
+                        <option value="">
+                            Select City
+                        </option>
+
+                        <option value="mumbai">
+                            Mumbai
+                        </option>
+
+                        <option value="bengaluru">
+                            Bengaluru
+                        </option>
+
+                        <option value="hyderabad">
+                            Hyderabad
+                        </option>
+
+                        <option value="delhi">
+                            Delhi
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <!-- LOCATION -->
+
+                <div>
+                    <label for="location">
+                        Location
+                    </label>
+
+                    <select
+                        id="location"
+                        required
+                        disabled>
+
+                        <option value="">
+                            First select city
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <!-- AREA -->
+
+                <div>
+                    <label for="area">
+                        Area (sq ft)
+                    </label>
+
+                    <input
+                        id="area"
+                        type="number"
+                        min="1"
+                        max="10000"
+                        step="any"
+                        placeholder="e.g. 1200"
+                        required
+                    >
+                </div>
+
+
+                <!-- BEDROOMS -->
+
+                <div>
+                    <label for="bedrooms">
+                        Bedrooms
+                    </label>
+
+                    <select
+                        id="bedrooms"
+                        required>
+
+                        <option value="">
+                            Select Bedrooms
+                        </option>
+
+                        <option value="1">1 BHK</option>
+                        <option value="2">2 BHK</option>
+                        <option value="3">3 BHK</option>
+                        <option value="4">4 BHK</option>
+                        <option value="5">5 BHK</option>
+                        <option value="6">6 BHK</option>
+                        <option value="7">7 BHK</option>
+                        <option value="8">8 BHK</option>
+                        <option value="9">9 BHK</option>
+                        <option value="10">10 BHK</option>
+
+                    </select>
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- DELHI EXTRA FEATURES -->
+            <!-- ================================================= -->
+
+            <div id="delhiFields">
+
+                <div class="grid">
+
+                    <div>
+                        <label for="bathrooms">
+                            Bathrooms
+                        </label>
+
+                        <input
+                            id="bathrooms"
+                            type="number"
+                            min="0"
+                            max="20"
+                            value="2"
+                        >
+                    </div>
+
+
+                    <div>
+                        <label for="balcony">
+                            Balcony
+                        </label>
+
+                        <input
+                            id="balcony"
+                            type="number"
+                            min="0"
+                            max="20"
+                            value="1"
+                        >
+                    </div>
+
+
+                    <div>
+                        <label for="status">
+                            Property Status
+                        </label>
+
+                        <select id="status">
+
+                            <option value="Ready to Move">
+                                Ready to Move
+                            </option>
+
+                            <option value="Under Construction">
+                                Under Construction
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    <div>
+                        <label for="neworold">
+                            Property Type
+                        </label>
+
+                        <select id="neworold">
+
+                            <option value="New">
+                                New
+                            </option>
+
+                            <option value="Resale">
+                                Resale
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    <div>
+                        <label for="parking">
+                            Parking
+                        </label>
+
+                        <select id="parking">
+
+                            <option value="0">No Parking</option>
+                            <option value="1" selected>1 Parking</option>
+                            <option value="2">2 Parking</option>
+                            <option value="3">3 Parking</option>
+
+                        </select>
+                    </div>
+
+
+                    <div>
+                        <label for="furnished">
+                            Furnishing
+                        </label>
+
+                        <select id="furnished">
+
+                            <option value="Unfurnished">
+                                Unfurnished
+                            </option>
+
+                            <option value="Semi-Furnished">
+                                Semi-Furnished
+                            </option>
+
+                            <option value="Furnished">
+                                Furnished
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    <div>
+                        <label for="lift">
+                            Lift
+                        </label>
+
+                        <select id="lift">
+
+                            <option value="0">
+                                No
+                            </option>
+
+                            <option value="1" selected>
+                                Yes
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    <div>
+                        <label for="type_of_building">
+                            Building Type
+                        </label>
+
+                        <select id="type_of_building">
+
+                            <option value="Apartment">
+                                Apartment
+                            </option>
+
+                            <option value="Individual House">
+                                Individual House
+                            </option>
+
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="predictButton"
+                type="submit">
+
+                Predict Price
+
+            </button>
+
+        </form>
+
+
+        <!-- RESULT -->
+
+        <div
+            id="result"
+            class="result">
+
+            <h3>Estimated House Price</h3>
+
+            <div
+                id="price"
+                class="price">
+            </div>
+
+            <p id="priceDetails"></p>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            id="error"
+            class="error">
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- CSV PREDICTION -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Bulk CSV Prediction</h2>
+
+        <p class="info">
+            Select city and upload your property CSV.
+            The predicted result will automatically download.
+        </p>
+
+        <form id="csvForm">
+
+            <div class="grid">
+
+                <div>
+
+                    <label for="csvCity">
+                        City
+                    </label>
+
+                    <select
+                        id="csvCity"
+                        required>
+
+                        <option value="">
+                            Select City
+                        </option>
+
+                        <option value="mumbai">
+                            Mumbai
+                        </option>
+
+                        <option value="bengaluru">
+                            Bengaluru
+                        </option>
+
+                        <option value="hyderabad">
+                            Hyderabad
+                        </option>
+
+                        <option value="delhi">
+                            Delhi
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label for="csvFile">
+                        CSV File
+                    </label>
+
+                    <input
+                        id="csvFile"
+                        type="file"
+                        accept=".csv,text/csv"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="csvButton"
+                type="submit">
+
+                Predict & Download CSV
+
+            </button>
+
+        </form>
+
+
+        <div
+            id="csvSuccess"
+            class="success">
+        </div>
+
+
+        <div
+            id="csvError"
+            class="error">
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer>
+    India House Price Prediction • Machine Learning Project
+</footer>
+
+
+<script>
+
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
+
+    const city =
+        document.getElementById("city");
+
+    const locationSelect =
+        document.getElementById("location");
+
+    const delhiFields =
+        document.getElementById("delhiFields");
+
+    const predictionForm =
+        document.getElementById("predictionForm");
+
+    const predictButton =
+        document.getElementById("predictButton");
+
+    const resultBox =
+        document.getElementById("result");
+
+    const errorBox =
+        document.getElementById("error");
+
+
+    // =====================================================
+    // ERROR
+    // =====================================================
+
+    function showError(message) {
+
+        errorBox.textContent = message;
+
+        errorBox.style.display = "block";
+
+        resultBox.style.display = "none";
+
+    }
+
+
+    // =====================================================
+    // CITY CHANGE
+    // LOAD ALL LOCATIONS OF SELECTED CITY
+    // =====================================================
+
+    city.addEventListener(
+        "change",
+        async function () {
+
+            const selectedCity =
+                this.value;
+
+
+            resultBox.style.display =
+                "none";
+
+            errorBox.style.display =
+                "none";
+
+
+            // Delhi fields
+            if (selectedCity === "delhi") {
+
+                delhiFields.style.display =
+                    "block";
+
+            } else {
+
+                delhiFields.style.display =
+                    "none";
+
+            }
+
+
+            // Reset location
+            locationSelect.disabled =
+                true;
+
+
+            locationSelect.innerHTML =
+                '<option value="">Loading locations...</option>';
+
+
+            if (!selectedCity) {
+
+                locationSelect.innerHTML =
+                    '<option value="">First select city</option>';
+
+                return;
+
+            }
+
+
+            // =================================================
+            // GET LOCATIONS FROM BACKEND
+            // =================================================
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/locations/${selectedCity}`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        "Could not load locations."
+                    );
+
+                }
+
+
+                if (
+                    !Array.isArray(data.locations) ||
+                    data.locations.length === 0
+                ) {
+
+                    throw new Error(
+                        "No locations found for this city."
+                    );
+
+                }
+
+
+                // Clear
+                locationSelect.innerHTML =
+                    '<option value="">Select Location</option>';
+
+
+                // Add every location
+                data.locations.forEach(
+                    function (location) {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            location;
+
+
+                        option.textContent =
+                            location;
+
+
+                        locationSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+                locationSelect.disabled =
+                    false;
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                locationSelect.innerHTML =
+                    '<option value="">Locations unavailable</option>';
+
+
+                locationSelect.disabled =
+                    true;
+
+
+                showError(
+                    error.message
+                );
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // HOUSE PREDICTION
+    // =====================================================
+
+    predictionForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            errorBox.style.display =
+                "none";
+
+            resultBox.style.display =
+                "none";
+
+
+            const selectedCity =
+                city.value;
+
+
+            const location =
+                locationSelect.value;
+
+
+            const area =
+                Number(
+                    document
+                        .getElementById("area")
+                        .value
+                );
+
+
+            const bedrooms =
+                Number(
+                    document
+                        .getElementById("bedrooms")
+                        .value
+                );
+
+
+            // =================================================
+            // VALIDATION
+            // =================================================
+
+            if (!selectedCity) {
+
+                showError(
+                    "Please select city."
+                );
+
+                return;
+
+            }
+
+
+            if (!location) {
+
+                showError(
+                    "Please select location."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !Number.isFinite(area) ||
+                area <= 0 ||
+                area > 10000
+            ) {
+
+                showError(
+                    "Enter valid area between 1 and 10000 sq ft."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                bedrooms < 1 ||
+                bedrooms > 10
+            ) {
+
+                showError(
+                    "Please select bedrooms."
+                );
+
+                return;
+
+            }
+
+
+            // =================================================
+            // NORMAL CITY PAYLOAD
+            // =================================================
+
+            let payload = {
+
+                area: area,
+
+                bedrooms: bedrooms,
+
+                location: location
+
+            };
+
+
+            // =================================================
+            // DELHI PAYLOAD
+            // =================================================
+
+            if (selectedCity === "delhi") {
+
+                payload = {
+
+                    ...payload,
+
+
+                    bathrooms:
+                        Number(
+                            document
+                                .getElementById(
+                                    "bathrooms"
+                                )
+                                .value
+                        ),
+
+
+                    balcony:
+                        Number(
+                            document
+                                .getElementById(
+                                    "balcony"
+                                )
+                                .value
+                        ),
+
+
+                    status:
+                        document
+                            .getElementById(
+                                "status"
+                            )
+                            .value,
+
+
+                    neworold:
+                        document
+                            .getElementById(
+                                "neworold"
+                            )
+                            .value,
+
+
+                    parking:
+                        Number(
+                            document
+                                .getElementById(
+                                    "parking"
+                                )
+                                .value
+                        ),
+
+
+                    furnished:
+                        document
+                            .getElementById(
+                                "furnished"
+                            )
+                            .value,
+
+
+                    lift:
+                        Number(
+                            document
+                                .getElementById(
+                                    "lift"
+                                )
+                                .value
+                        ),
+
+
+                    type_of_building:
+                        document
+                            .getElementById(
+                                "type_of_building"
+                            )
+                            .value
+
+                };
+
+            }
+
+
+            // =================================================
+            // API CALL
+            // =================================================
+
+            try {
+
+                predictButton.disabled =
+                    true;
+
+
+                predictButton.textContent =
+                    "Predicting...";
+
+
+                const response =
+                    await fetch(
+
+                        `/predict/${selectedCity}`,
+
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
+
+                        }
+
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    let message =
+                        data.detail;
+
+
+                    if (
+                        typeof message !==
+                        "string"
+                    ) {
+
+                        message =
+                            JSON.stringify(
+                                message
+                            );
+
+                    }
+
+
+                    throw new Error(
+                        message ||
+                        "Prediction failed."
+                    );
+
+                }
+
+
+                // =================================================
+                // DISPLAY PRICE
+                // =================================================
+
+                const predictedPrice =
+                    Number(
+                        data.predicted_price
+                    );
+
+
+                document
+                    .getElementById("price")
+                    .textContent =
+
+                    "₹" +
+
+                    predictedPrice
+                        .toLocaleString(
+                            "en-IN",
+                            {
+                                maximumFractionDigits: 0
+                            }
+                        );
+
+
+                document
+                    .getElementById(
+                        "priceDetails"
+                    )
+                    .textContent =
+
+                    `${data.price_lakh} Lakh • ` +
+                    `${data.price_crore} Crore`;
+
+
+                resultBox.style.display =
+                    "block";
+
+
+            } catch (error) {
+
+                showError(
+                    error.message
+                );
+
+
+            } finally {
+
+                predictButton.disabled =
+                    false;
+
+
+                predictButton.textContent =
+                    "Predict Price";
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // CSV PREDICTION
+    // =====================================================
+
+    document
+        .getElementById("csvForm")
+        .addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const csvCity =
+                    document
+                        .getElementById(
+                            "csvCity"
+                        )
+                        .value;
+
+
+                const file =
+                    document
+                        .getElementById(
+                            "csvFile"
+                        )
+                        .files[0];
+
+
+                const button =
+                    document
+                        .getElementById(
+                            "csvButton"
+                        );
+
+
+                const csvError =
+                    document
+                        .getElementById(
+                            "csvError"
+                        );
+
+
+                const csvSuccess =
+                    document
+                        .getElementById(
+                            "csvSuccess"
+                        );
+
+
+                csvError.style.display =
+                    "none";
+
+
+                csvSuccess.style.display =
+                    "none";
+
+
+                if (!csvCity) {
+
+                    csvError.textContent =
+                        "Please select city.";
+
+                    csvError.style.display =
+                        "block";
+
+                    return;
+
+                }
+
+
+                if (!file) {
+
+                    csvError.textContent =
+                        "Please select CSV file.";
+
+                    csvError.style.display =
+                        "block";
+
+                    return;
+
+                }
+
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "city",
+                    csvCity
+                );
+
+
+                formData.append(
+                    "file",
+                    file
+                );
+
+
+                try {
+
+                    button.disabled =
+                        true;
+
+
+                    button.textContent =
+                        "Processing...";
+
+
+                    const response =
+                        await fetch(
+
+                            "/predict-file",
+
+                            {
+
+                                method: "POST",
+
+                                body: formData
+
+                            }
+
+                        );
+
+
+                    if (!response.ok) {
+
+                        let message =
+                            "CSV prediction failed.";
+
+
+                        try {
+
+                            const errorData =
+                                await response.json();
+
+
+                            if (
+                                typeof errorData.detail ===
+                                "string"
+                            ) {
+
+                                message =
+                                    errorData.detail;
+
+                            } else {
+
+                                message =
+                                    JSON.stringify(
+                                        errorData.detail
+                                    );
+
+                            }
+
+                        } catch {}
+
+
+                        throw new Error(
+                            message
+                        );
+
+                    }
+
+
+                    // =================================================
+                    // DOWNLOAD
+                    // =================================================
+
+                    const blob =
+                        await response.blob();
+
+
+                    const url =
+                        URL.createObjectURL(
+                            blob
+                        );
+
+
+                    const link =
+                        document.createElement(
+                            "a"
+                        );
+
+
+                    link.href =
+                        url;
+
+
+                    link.download =
+                        `${csvCity}_predictions.csv`;
+
+
+                    document.body
+                        .appendChild(
+                            link
+                        );
+
+
+                    link.click();
+
+
+                    link.remove();
+
+
+                    URL.revokeObjectURL(
+                        url
+                    );
+
+
+                    csvSuccess.textContent =
+                        "Prediction completed. CSV downloaded.";
+
+
+                    csvSuccess.style.display =
+                        "block";
+
+
+                } catch (error) {
+
+                    csvError.textContent =
+                        error.message;
+
+
+                    csvError.style.display =
+                        "block";
+
+
+                } finally {
+
+                    button.disabled =
+                        false;
+
+
+                    button.textContent =
+                        "Predict & Download CSV";
+
+                }
+
+            }
+        );
+
+</script>
+
+</body>
+</html>
