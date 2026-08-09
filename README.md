@@ -4,7 +4,7 @@ A **Machine Learning-based House Price Prediction Web Application** that predict
 
 ## 🖼️ Project Preview
 
-![House Price Predictor](./Screenshot 2026-08-09 112900.png)
+![House Price Predictor](./house-price-predictor.png)
 ## 🚀 Live Demo
 
 👉 **[Try the Live Application](https://house-price-prediction-ymul.onrender.com/)**
