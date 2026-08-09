@@ -1,14 +1,12 @@
 # 🏠 India House Price Predictor
 
 A **Machine Learning-based House Price Prediction Web Application** that predicts property prices based on different property features such as city, location, area, bedrooms, bathrooms, furnishing, parking, property type, and more.
+![House Price Predictor](Screenshot 2026-08-09 112900.png)
 
 ## 🚀 Live Demo
 
 👉 **[Try the Live Application](https://house-price-prediction-ymul.onrender.com/)**
 
-## 📂 GitHub Repository
-
-👉 **[View Source Code on GitHub](YOUR_GITHUB_REPOSITORY_LINK)**
 
 ## ✨ Features
 
